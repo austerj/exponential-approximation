@@ -8,7 +8,6 @@ authors = ["austerj"]
 python = "^3.12"
 pytest = "^7.1.2"
 ipython = "^8.6.0"
-snakestack = { git = "https://github.com/austerj/snakestack", branch = "main" }
 
 [tool.poetry.dev-dependencies]
 black = "^22.6.0"
