@@ -5,11 +5,11 @@ from expapprox.approximator import FixedPointApproximator
 
 @dataclass(frozen=True, slots=True)
 class MockApproximator(FixedPointApproximator):
-    def __call__(self, x: int):
+    def approx(self, x: int) -> int:
         return x
 
-    def ref(self, x: int):
-        return x
+    def ref(self, x: int) -> float:
+        return 1.0
 
 
 def test_identity():
@@ -28,3 +28,7 @@ def test_to_float():
     assert MockApproximator(3).to_float(1020) == 1.02
     assert MockApproximator(4).to_float(10000) == 1.0
     assert MockApproximator(5).to_float(5920100) == 59.201
+
+
+def test_benchmark():
+    assert MockApproximator(3).benchmark([1.0, 1.5, 2.0, 2.5]) == [0.0, 0.5, 1.0, 1.5]
