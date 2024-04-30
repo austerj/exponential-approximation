@@ -58,10 +58,18 @@ class FixedPointApproximator(ABC):
         return [relative_error(self(x), self.ref(x)) for x in (self.to_fixed(x) for x in xs)]
 
 
+@dataclass(frozen=True, slots=True)
+class ExponentialApproximator(FixedPointApproximator, ABC):
+    """Base class for fixed-point approximator of the exponential function."""
+
+    def ref(self, x: int) -> mpf:
+        return mpmath.exp(self.to_float(x))
+
+
 def relative_error(approx: mpf, ref: mpf) -> float:
     """Compute the relative error for an approximation compared to a reference value."""
     # handle zero-division
     if ref == 0.0:
         return 0.0 if approx == ref else math.inf
-    # force result to built-in float
+    # convert (mpmath float) result to built-in float
     return float(abs((approx - ref) / ref))
