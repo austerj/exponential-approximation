@@ -12,6 +12,12 @@ class MockApproximator(FixedPointApproximator):
         return x
 
 
+def test_identity():
+    assert MockApproximator(3).identity == 1_000
+    assert MockApproximator(4).identity == 10_000
+    assert MockApproximator(5).identity == 100_000
+
+
 def test_to_fixed_point():
     assert MockApproximator(3).to_fixed(1.02) == 1020
     assert MockApproximator(4).to_fixed(1) == 10000
