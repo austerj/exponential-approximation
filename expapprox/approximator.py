@@ -26,9 +26,9 @@ class FixedPointApproximator(ABC):
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({', '.join(self._fields())})"
 
-    def __call__(self, x: int) -> mpf:
-        """Approximate function value from fixed-point number as mpmath float."""
-        return self.to_float(self.approx(x))
+    def __call__(self, x: int | float) -> mpf:
+        """Approximate function value as mpmath float."""
+        return self.to_float(self.approx(self.to_fixed(x)))
 
     @property
     def workdps(self):
@@ -49,14 +49,14 @@ class FixedPointApproximator(ABC):
         """Convert fixed-point number to mpmath float."""
         return mpmath.mpf(x) / self.identity
 
-    def to_fixed(self, x: float | int) -> int:
+    def to_fixed(self, x: int | float) -> int:
         """Convert number to fixed-point representation."""
         # using mpmath float for intermediary multiplication before flooring
         return math.floor(mpmath.mpf(x) * self.identity)
 
     def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
         """Compute relative errors (from reference values) for sequence of inputs."""
-        return [relative_error(self(x), self.ref(x)) for x in (self.to_fixed(x) for x in xs)]
+        return [relative_error(self.to_float(self.approx(x)), self.ref(x)) for x in (self.to_fixed(x) for x in xs)]
 
 
 class ExponentialApproximator(FixedPointApproximator, ABC):
