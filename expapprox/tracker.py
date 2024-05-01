@@ -6,6 +6,9 @@ from abc import ABC
 from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 
+if typing.TYPE_CHECKING:
+    from _typeshed import ConvertibleToInt
+
 R = typing.TypeVar("R")
 
 
@@ -24,6 +27,9 @@ class IntegerTracker(AbstractContextManager):
             tracker = self
 
         self.int = TrackedInteger
+
+    def __enter__(self) -> typing.Self:
+        return self
 
     def __exit__(
         self,
@@ -50,8 +56,8 @@ class IntegerTracker(AbstractContextManager):
         if not isinstance(value, int):
             raise TypeError(f"Cannot track non-integer value: {value}")
         # update min / max values
-        self.min_int = value if self.min_int is None else min(self.min_int, value)
-        self.max_int = value if self.max_int is None else max(self.max_int, value)
+        self.min_int = value if self.min_int is None or value < self.min_int else self.min_int
+        self.max_int = value if self.max_int is None or value > self.max_int else self.max_int
 
 
 # note: "lying" in the return type here to preserve (int) type hints of wrapped methods
@@ -86,9 +92,18 @@ class _TrackedInteger(int, ABC):
 
     tracker: IntegerTracker
 
-    def __new__(cls, value: int):
+    @typing.overload
+    def __new__(cls, x: ConvertibleToInt = ..., /) -> typing.Self:
+        ...
+
+    @typing.overload
+    def __new__(cls, x: str | bytes | bytearray, /, base: typing.SupportsIndex) -> typing.Self:
+        ...
+
+    def __new__(cls, *args, **kwargs):
+        value = super().__new__(cls, *args, **kwargs)
         cls.tracker.register(value)
-        return super().__new__(cls, value)
+        return value
 
     def __repr__(self) -> str:
         return f"{self.__class__.__name__}({super().__repr__()})"
