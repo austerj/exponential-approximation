@@ -1,9 +1,6 @@
-from dataclasses import dataclass
-
 from expapprox.approximator import FixedPointApproximator
 
 
-@dataclass(frozen=True, slots=True)
 class MockApproximator(FixedPointApproximator):
     def approx(self, x: int) -> int:
         return x

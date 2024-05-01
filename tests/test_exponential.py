@@ -1,12 +1,10 @@
 import math
-from dataclasses import dataclass
 
 import pytest
 
 from expapprox.approximator import ExponentialApproximator
 
 
-@dataclass(frozen=True, slots=True)
 class MockApproximator(ExponentialApproximator):
     def approx(self, x: int) -> int:
         raise NotImplementedError

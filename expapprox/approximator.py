@@ -1,7 +1,6 @@
 import math
 import typing
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
 
 import mpmath
 
@@ -9,25 +8,23 @@ import mpmath
 mpf = float
 
 
-@dataclass(frozen=True, slots=True)
 class FixedPointApproximator(ABC):
     """Base class for fixed-point number approximators."""
 
-    # fixed-point specification
-    decimals: int
-    _identity: int = field(init=False)
+    __slots__ = ("decimals", "identity")
 
-    def __post_init__(self):
-        object.__setattr__(self, "_identity", 10**self.decimals)
+    def __init__(self, decimals: int):
+        # fixed-point decimals
+        self.decimals = decimals
+        # multiplicative identity of fixed-point specification
+        self.identity = 10**self.decimals
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}()"
 
     def __call__(self, x: int) -> mpf:
         """Approximate function value from fixed-point number as mpmath float."""
         return self.to_float(self.approx(x))
-
-    @property
-    def identity(self) -> int:
-        """Multiplicative identity of fixed-point specification."""
-        return self._identity
 
     @property
     def workdps(self):
@@ -58,7 +55,6 @@ class FixedPointApproximator(ABC):
         return [relative_error(self(x), self.ref(x)) for x in (self.to_fixed(x) for x in xs)]
 
 
-@dataclass(frozen=True, slots=True)
 class ExponentialApproximator(FixedPointApproximator, ABC):
     """Base class for fixed-point approximator of the exponential function."""
 
