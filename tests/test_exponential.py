@@ -17,8 +17,7 @@ def test_ref():
     assert approximator.ref(0) == 1.0
 
     # exp(1) == e ~= 2.71828
-    e = 2.71828
-    assert approximator.ref(approximator.identity) == pytest.approx(e)
+    assert approximator.ref(approximator.identity) == pytest.approx(math.e)
 
     for float_x in [-1.2, -0.2, 0.005, -0.231, -5.4, 0.12, 0.93, 8.2]:
         # exp(log(|x|)) == |x|
