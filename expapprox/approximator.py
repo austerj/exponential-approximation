@@ -40,8 +40,9 @@ class FixedPointApproximator(ABC):
         """Approximate function value from fixed-point number as fixed-point number."""
         raise NotImplementedError
 
+    @classmethod
     @abstractmethod
-    def ref(self, x: float) -> mpf:
+    def ref(cls, x: float) -> mpf:
         """Compute reference value."""
         raise NotImplementedError
 
@@ -62,7 +63,8 @@ class FixedPointApproximator(ABC):
 class ExponentialApproximator(FixedPointApproximator, ABC):
     """Base class for fixed-point approximator of the exponential function."""
 
-    def ref(self, x: float) -> mpf:
+    @classmethod
+    def ref(cls, x: float) -> mpf:
         return mpmath.exp(x)
 
 

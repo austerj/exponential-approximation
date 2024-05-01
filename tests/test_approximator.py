@@ -5,7 +5,8 @@ class MockApproximator(FixedPointApproximator):
     def approx(self, x: int) -> int:
         return x
 
-    def ref(self, x: int) -> float:
+    @classmethod
+    def ref(cls, x: float) -> float:
         return 1.0
 
 
