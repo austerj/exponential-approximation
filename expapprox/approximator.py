@@ -41,8 +41,8 @@ class FixedPointApproximator(ABC):
         raise NotImplementedError
 
     @abstractmethod
-    def ref(self, x: int) -> mpf:
-        """Compute reference value from fixed-point number as mpmath float."""
+    def ref(self, x: float) -> mpf:
+        """Compute reference value."""
         raise NotImplementedError
 
     def to_float(self, x: int) -> mpf:
@@ -56,14 +56,14 @@ class FixedPointApproximator(ABC):
 
     def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
         """Compute relative errors (from reference values) for sequence of inputs."""
-        return [relative_error(self.to_float(self.approx(x)), self.ref(x)) for x in (self.to_fixed(x) for x in xs)]
+        return [relative_error(self(x), self.ref(x)) for x in xs]
 
 
 class ExponentialApproximator(FixedPointApproximator, ABC):
     """Base class for fixed-point approximator of the exponential function."""
 
-    def ref(self, x: int) -> mpf:
-        return mpmath.exp(self.to_float(x))
+    def ref(self, x: float) -> mpf:
+        return mpmath.exp(x)
 
 
 def relative_error(approx: mpf, ref: mpf) -> float:
