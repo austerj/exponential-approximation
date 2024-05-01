@@ -19,8 +19,12 @@ class FixedPointApproximator(ABC):
         # multiplicative identity of fixed-point specification
         self.identity = 10**self.decimals
 
+    def _fields(self):
+        """Get fields used in string representation."""
+        return [f"decimals={self.decimals}"]
+
     def __repr__(self) -> str:
-        return f"{self.__class__.__name__}()"
+        return f"{self.__class__.__name__}({', '.join(self._fields())})"
 
     def __call__(self, x: int) -> mpf:
         """Approximate function value from fixed-point number as mpmath float."""
