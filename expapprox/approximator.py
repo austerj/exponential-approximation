@@ -14,6 +14,8 @@ class FixedPointApproximator(ABC):
     __slots__ = ("decimals", "identity")
 
     def __init__(self, decimals: int):
+        if decimals < 0:
+            raise ValueError("Invalid decimals, must be greater than 0")
         # fixed-point decimals
         self.decimals = decimals
         # multiplicative identity of fixed-point specification
