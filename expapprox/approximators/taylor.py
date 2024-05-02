@@ -8,8 +8,6 @@ class TaylorApproximator(ExponentialApproximator):
 
     __slots__ = ("order", "factorial")
 
-    order: int
-
     def __init__(self, decimals: int, order: int):
         super().__init__(decimals)
         if order < 1:
