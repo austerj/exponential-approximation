@@ -1,6 +1,8 @@
+import math
+
 import pytest
 
-from expapprox.utils import float_range, int_range
+from expapprox.utils import e, float_range, int_range
 
 
 def test_int_range():
@@ -33,3 +35,8 @@ def test_float_range():
         pytest.approx(0.3),
         pytest.approx(0.35),
     ]
+
+
+def test_e():
+    for decimals in range(6):
+        assert e(decimals) == int(str(math.e).replace(".", "")[: decimals + 1])
