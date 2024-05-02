@@ -1,11 +1,19 @@
 import pytest
 
+from expapprox import errors
 from expapprox.tracker import IntegerTracker
 
 
 @pytest.fixture
 def tracker():
     return IntegerTracker()
+
+
+def test_invalid_tracking():
+    with IntegerTracker() as tracker:
+        x = tracker.int(10)
+        with pytest.raises(errors.IntegerTrackerError):
+            x += 0.1
 
 
 def test_context():

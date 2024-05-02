@@ -2,6 +2,7 @@ import math
 
 import pytest
 
+from expapprox import errors
 from expapprox.approximators import TaylorApproximator
 from expapprox.utils import float_range
 
@@ -10,7 +11,7 @@ DECIMALS = 10
 
 def test_invalid_order():
     # order-0 fails
-    with pytest.raises(ValueError):
+    with pytest.raises(errors.ApproximatorError):
         TaylorApproximator(DECIMALS, 0)
     # order-1 works
     TaylorApproximator(DECIMALS, 1)

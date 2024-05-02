@@ -4,6 +4,8 @@ from abc import ABC, abstractmethod
 
 import mpmath
 
+from expapprox import errors
+
 # mpmath float alias - actual type is dynamic and not handled properly by pyright etc.
 mpf = float
 
@@ -15,7 +17,7 @@ class FixedPointApproximator(ABC):
 
     def __init__(self, decimals: int):
         if decimals < 0:
-            raise ValueError("Invalid decimals, must be greater than 0")
+            raise errors.InvalidDecimalsError()
         # fixed-point decimals
         self.decimals = decimals
         # multiplicative identity of fixed-point specification

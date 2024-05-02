@@ -2,6 +2,7 @@ import math
 
 import pytest
 
+from expapprox import errors
 from expapprox.utils import e, float_range, int_range
 
 
@@ -38,5 +39,8 @@ def test_float_range():
 
 
 def test_e():
+    with pytest.raises(errors.InvalidDecimalsError):
+        e(-1)
+
     for decimals in range(6):
         assert e(decimals) == int(str(math.e).replace(".", "")[: decimals + 1])

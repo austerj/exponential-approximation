@@ -6,6 +6,8 @@ from abc import ABC
 from contextlib import AbstractContextManager
 from dataclasses import dataclass, field
 
+from expapprox import errors
+
 if typing.TYPE_CHECKING:
     from _typeshed import ConvertibleToInt
 
@@ -54,7 +56,7 @@ class IntegerTracker(AbstractContextManager):
     def register(self, value: int):
         """Register integer with tracker context."""
         if not isinstance(value, int):
-            raise TypeError(f"Cannot track non-integer value: {value}")
+            raise errors.IntegerTrackerError(f"Cannot track non-integer value: {value}")
         # update min / max values
         self.min_int = value if self.min_int is None or value < self.min_int else self.min_int
         self.max_int = value if self.max_int is None or value > self.max_int else self.max_int

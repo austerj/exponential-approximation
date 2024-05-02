@@ -1,5 +1,6 @@
 import math
 
+from expapprox import errors
 from expapprox.approximator import ExponentialApproximator
 
 
@@ -11,7 +12,7 @@ class TaylorApproximator(ExponentialApproximator):
     def __init__(self, decimals: int, order: int):
         super().__init__(decimals)
         if order < 1:
-            raise ValueError("Invalid order {order}; must be 1 or greater")
+            raise errors.ApproximatorError("Invalid order {order}; must be 1 or greater")
         self.order = order
         self.factorial = math.factorial(order)
 

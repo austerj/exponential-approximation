@@ -1,5 +1,7 @@
 import math
 
+from expapprox import errors
+
 
 def int_range(start: int, end: int, step: int) -> list[int]:
     """Range of evenly-spaced integers."""
@@ -98,7 +100,7 @@ _E = (
 def e(decimals: int) -> int:
     """Get fixed-point representation of e for specified number of decimals."""
     if decimals < 0:
-        raise ValueError("Invalid decimals, must be greater than 0")
+        raise errors.InvalidDecimalsError()
     if (missing_decimals := decimals - (len(_E) - 1)) > 0:
         return int(_E) * 10**missing_decimals
     return int(_E[: decimals + 1])

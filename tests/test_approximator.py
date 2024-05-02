@@ -1,3 +1,6 @@
+import pytest
+
+from expapprox import errors
 from expapprox.approximator import FixedPointApproximator
 
 
@@ -8,6 +11,13 @@ class MockApproximator(FixedPointApproximator):
     @classmethod
     def ref(cls, x: float) -> float:
         return 1.0
+
+
+def test_invalid_decimals():
+    with pytest.raises(errors.InvalidDecimalsError):
+        MockApproximator(-1)
+    # no decimals works
+    MockApproximator(0)
 
 
 def test_identity():
