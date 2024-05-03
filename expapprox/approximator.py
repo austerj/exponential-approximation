@@ -34,6 +34,13 @@ class FixedPointApproximator(ABC):
         """Approximate function value as mpmath float."""
         return self.to_float(self.approx(self.to_fixed(x)))
 
+    def try_call(self, x: int | float) -> mpf:
+        """Return function value approximation as mpmath float or NaN on error."""
+        try:
+            return self(x)
+        except:
+            return mpmath.nan
+
     @property
     def workdps(self):
         """Context manager for mpmath decimals."""
