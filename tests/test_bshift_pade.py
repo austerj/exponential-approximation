@@ -1,5 +1,6 @@
 import math
 
+import mpmath
 import pytest
 
 from expapprox import errors
@@ -16,6 +17,15 @@ def test_invalid_order():
         BitShiftPadeApproximator(DECIMALS, 0)
     # order-1 works
     BitShiftPadeApproximator(DECIMALS, 1)
+
+
+def test_log2_precision():
+    # test that increasing precision of log(2) does not change its fixed-point representation
+    for decimals in [2, 5, 10, 16]:
+        approximator = BitShiftPadeApproximator(decimals, 2)
+        for extra_decimals in [decimals, decimals + 2, decimals + 4, decimals + 8]:
+            with mpmath.workdps(extra_decimals):
+                assert approximator.log2 == approximator.to_fixed(mpmath.log(2))
 
 
 def test_constants():
