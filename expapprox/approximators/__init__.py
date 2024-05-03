@@ -1,2 +1,3 @@
+from expapprox.approximators.bshift_pade import BitShiftPadeApproximator
 from expapprox.approximators.pade import PadeApproximator
 from expapprox.approximators.taylor import TaylorApproximator
