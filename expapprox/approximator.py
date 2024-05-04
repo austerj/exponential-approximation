@@ -68,7 +68,8 @@ class FixedPointApproximator(ABC):
 
     def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
         """Compute relative errors (from reference values) for sequence of inputs."""
-        return [relative_error(self(x), self.ref(x)) for x in xs]
+        with self.workdps:
+            return [relative_error(self(x), self.ref(x)) for x in xs]
 
 
 class ExponentialApproximator(FixedPointApproximator, ABC):
