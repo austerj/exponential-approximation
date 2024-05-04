@@ -5,6 +5,7 @@ import pytest
 
 from expapprox import errors
 from expapprox.approximators import BitShiftPadeApproximator
+from expapprox.approximators.pade import PadeApproximator
 from expapprox.utils import float_range
 
 DECIMALS = 10
@@ -43,6 +44,17 @@ def test_exact():
 
     for i in [-9, -2, 0, 3, 8, 24]:
         assert approximator.approx(i * approximator.log2) == approximator.to_fixed(2**i)
+
+
+def test_log2_range():
+    # test that approximator matches with regular Pade approximator for -log(2) < x < log(2)
+    bitshifted_approximator = BitShiftPadeApproximator(DECIMALS, 10)
+    log2 = bitshifted_approximator.log2
+    approximator = PadeApproximator(DECIMALS, 10)
+
+    for i in range(2, 10):
+        x = log2 // i
+        assert bitshifted_approximator.approx(log2 // i) == approximator.approx(log2 // i)
 
 
 def test_orders():
