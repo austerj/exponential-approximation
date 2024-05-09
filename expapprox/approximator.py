@@ -75,6 +75,8 @@ class FixedPointApproximator(ABC):
 class ExponentialApproximator(FixedPointApproximator, ABC):
     """Base class for fixed-point approximator of the exponential function."""
 
+    __slots__ = ()
+
     @classmethod
     def ref(cls, x: float) -> mpf:
         return mpmath.exp(x)
