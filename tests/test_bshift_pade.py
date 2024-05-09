@@ -67,9 +67,8 @@ def test_orders():
     order_4 = BitShiftPadeApproximator(DECIMALS, 4)
 
     for x in xs:
-        unsigned_q, unsigned_r = divmod(abs(order_1.to_fixed(x)), order_1.log2)
-        q = math.copysign(unsigned_q, x)
-        r = math.copysign(order_1.to_float(unsigned_r), x)
+        q = math.floor((x + 0.5 * mpmath.log(2)) / mpmath.log(2))
+        r = x - q * order_1.to_float(order_1.log2)
         assert order_1(x) == pytest.approx(2**q * (2 + r) / (2 - r))
         assert order_2(x) == pytest.approx(2**q * (12 + 6 * r + r**2) / (12 - 6 * r + r**2))
         assert order_3(x) == pytest.approx(
