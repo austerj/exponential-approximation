@@ -69,7 +69,7 @@ class FixedPointApproximator(ABC):
     def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
         """Compute relative errors (from reference values) for sequence of inputs."""
         with self.workdps:
-            return [relative_error(self(x), self.ref(x)) for x in xs]
+            return [relative_error(self.try_call(x), self.ref(x)) for x in xs]
 
 
 class ExponentialApproximator(FixedPointApproximator, ABC):
@@ -82,6 +82,9 @@ class ExponentialApproximator(FixedPointApproximator, ABC):
 
 def relative_error(approx: mpf, ref: mpf) -> float:
     """Compute the relative error for an approximation compared to a reference value."""
+    # handle NaN values
+    if not (math.isfinite(approx) and math.isfinite(ref)):
+        return math.nan
     # handle zero-division
     if ref == 0.0:
         return 0.0 if approx == ref else math.inf
