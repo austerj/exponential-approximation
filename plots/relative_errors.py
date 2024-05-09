@@ -1,4 +1,3 @@
-
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 
@@ -11,13 +10,13 @@ DECIMALS = 20
 
 def relative_error_plot(cls, title: str):
     stepsize = 0.002
-    xs = float_range(-4, 4, stepsize)
+    xs = float_range(-5, 5, stepsize)
     xs = [x for x in xs if not (-stepsize < x < stepsize)]  # exclude e(0) = 1
 
     f, axs = plt.subplots(2, sharex=True, figsize=[7, 5])
     axs[0].xaxis.set_minor_locator(ticker.AutoMinorLocator(2))
     axs[0].set_xlim([xs[0], xs[-1]])
-    axs[0].set_ylim([-10, 60])
+    axs[0].set_ylim([-20, 150])
     for ax in axs:
         ax.xaxis.set_tick_params(labelbottom=True)
 
@@ -46,7 +45,7 @@ def relative_error_plot(cls, title: str):
 
 def comparison_plot():
     stepsize = 0.002
-    xs = float_range(-4, 4, stepsize)
+    xs = float_range(-5, 5, stepsize)
     xs = [x for x in xs if not (-stepsize < x < stepsize)]  # exclude e(0) = 1
 
     f, axs = plt.subplots(3, 1, sharex=True, figsize=[7, 6])
