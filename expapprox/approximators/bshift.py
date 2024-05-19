@@ -19,6 +19,9 @@ class BitShiftApproximator(ExponentialApproximator, ABC):
             self.log2 = self.to_fixed(mpmath.log(2))
             self.log2half = self.log2 // 2
 
+    def _fields(self):
+        return self.remainder_approximator._fields()
+
     def approx(self, x: int) -> int:
         # find integer quotient s.t. remainder is between -0.5*log(2) and 0.5*log(2)
         quotient = (x + self.log2half) // self.log2
