@@ -3,7 +3,6 @@ from abc import ABC
 import mpmath
 
 from expapprox.approximator import ExponentialApproximator
-from expapprox.approximators.pade import PadeApproximator
 
 
 class BitShiftApproximator(ExponentialApproximator, ABC):
@@ -35,11 +34,3 @@ class BitShiftApproximator(ExponentialApproximator, ABC):
         else:
             # exp(remainder) * 2^quotient
             return preshifted << quotient
-
-
-class BitShiftPadeApproximator(BitShiftApproximator):
-    """Bit-shifted order-[N/N] Padé fixed-point approximator of the exponential function."""
-
-    def __init__(self, decimals: int, order: int):
-        super().__init__(decimals)
-        self.remainder_approximator = PadeApproximator(decimals, order)

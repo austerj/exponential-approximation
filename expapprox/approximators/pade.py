@@ -2,6 +2,7 @@ import math
 
 from expapprox import errors
 from expapprox.approximator import ExponentialApproximator
+from expapprox.approximators.bshift import BitShiftApproximator
 
 
 class PadeApproximator(ExponentialApproximator):
@@ -59,3 +60,11 @@ class PadeApproximator(ExponentialApproximator):
 def coefficients(order: int) -> list[int]:
     """Compute the Padé[N/N] coefficients of a given order for the exponential function."""
     return [math.factorial(2 * order - n) // (math.factorial(n) * math.factorial(order - n)) for n in range(order + 1)]
+
+
+class BitShiftPadeApproximator(BitShiftApproximator):
+    """Bit-shifted order-[N/N] Padé fixed-point approximator of the exponential function."""
+
+    def __init__(self, decimals: int, order: int):
+        super().__init__(decimals)
+        self.remainder_approximator = PadeApproximator(decimals, order)
