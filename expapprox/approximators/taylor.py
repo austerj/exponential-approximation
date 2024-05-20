@@ -7,28 +7,28 @@ from expapprox.approximator import ExponentialApproximator
 class TaylorApproximator(ExponentialApproximator):
     """Order-N Taylor fixed-point approximator of the exponential function."""
 
-    __slots__ = ("order", "factorial")
+    __slots__ = ("order", "factorial", "constants")
 
     def __init__(self, decimals: int, order: int):
         super().__init__(decimals)
         if order < 1:
             raise errors.ApproximatorError("Invalid order {order}; must be 1 or greater")
         self.order = order
+        self.constants = [self.to_fixed(math.factorial(order) / math.factorial(i)) for i in reversed(range(order))]
         self.factorial = math.factorial(order)
 
     def _fields(self):
         return [*super()._fields(), f"order={self.order}"]
 
     def approx(self, x: int) -> int:
-        # initialize accumulator to 1 + x (in fixed-point representation)
-        accumulator = x.__class__(self.identity)
+        # initialize accumulator to N! + x (in fixed-point representation)
+        accumulator = x.__class__(self.constants[0])
         accumulator += x
-        # accumulate power terms
-        x_pow = x
-        for i in range(2, self.order + 1):
-            # compute next power and rescale
-            x_pow *= x
-            x_pow //= self.identity
-            accumulator *= i  # correction for final factorial division
-            accumulator += x_pow
+        # accumulate Horner terms
+        for constant in self.constants[1:]:
+            # multiply to get next order and rescale
+            accumulator *= x
+            accumulator //= self.identity
+            # add constant
+            accumulator += constant
         return accumulator // self.factorial
