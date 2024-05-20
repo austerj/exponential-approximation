@@ -20,21 +20,15 @@ class TaylorApproximator(ExponentialApproximator):
         return [*super()._fields(), f"order={self.order}"]
 
     def approx(self, x: int) -> int:
-        # precompute powers and initialize accumulator to 1 (in fixed-point representation)
-        x_pows = self.powers(x)
+        # initialize accumulator to 1 + x (in fixed-point representation)
         accumulator = x.__class__(self.identity)
-        for i, x_pow in enumerate(x_pows):
-            # correction for final factorial division
-            if i > 0:
-                accumulator *= i + 1
+        accumulator += x
+        # accumulate power terms
+        x_pow = x
+        for i in range(2, self.order + 1):
+            # compute next power and rescale
+            x_pow *= x
+            x_pow //= self.identity
+            accumulator *= i  # correction for final factorial division
             accumulator += x_pow
         return accumulator // self.factorial
-
-    def powers(self, x: int) -> list[int]:
-        """Compute powers x^1, x^2, ..., x^order as fixed-point numbers."""
-        # compute x^2, x^3, ..., x^order
-        x_pow = x
-        x_pows = [(x_pow := (x_pow * x) // self.identity) for _ in range(1, self.order)]
-        # prepend x^1
-        x_pows.insert(0, x)
-        return x_pows
