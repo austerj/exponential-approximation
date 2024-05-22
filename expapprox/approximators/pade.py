@@ -22,39 +22,37 @@ class PadeApproximator(ExponentialApproximator):
         return [*super()._fields(), f"order={self.order}"]
 
     def approx(self, x: int) -> int:
-        # precompute power terms from ABSOLUTE x values (in fixed-point representation)
-        x_terms = self.terms(abs(x))
-        # compute even and odd term sums
-        even_sum = sum(x_terms[::2])
-        odd_sum = sum(x_terms[1::2])
-        # compute numerator and denominator from term sums
-        numerator = even_sum + odd_sum
-        denominator = even_sum - odd_sum
-        if x <= 0:
-            # invert numerator and denominator for negative x
-            return (denominator * self.identity) // numerator
-        else:
-            if denominator <= 0:
-                raise errors.ApproximatorDomainError("Exceeded critical point")
-            return (numerator * self.identity) // denominator
-
-    def terms(self, x: int) -> list[int]:
-        """
-        Compute Padé-weighted power terms c_0 ^ x^0, c_1 * x^1, ..., c_order * x^order as
-        fixed-point numbers.
-        """
-        # compute x^2, x^3, ..., x^order
+        # initialize even accumulator to c_0 (constant term)
+        even_accumulator = x.__class__(self.constant)
+        # initialize odd accumulator to c_1 * x
+        odd_accumulator = x
+        odd_accumulator *= self.coefficients[1]
+        # accumulate even- and odd power terms
+        # NOTE: can (should!) be unrolled in practice (where order etc. is fixed)
         x_pow = x
-        x_pows = [(x_pow := (x_pow * x) // self.identity) for _ in range(1, self.order)]
-        # prepend x^1
-        x_pows.insert(0, x)
-        # multiply x^1, x^2, ..., x^(order-1) by Padé coefficients
-        x_terms = [c * x_pow for (c, x_pow) in zip(self.coefficients[1:-1], x_pows[:-1])]
-        # prepend constant c_0 * x^0 = c_0
-        x_terms.insert(0, self.constant)
-        # append c_order * x^order = x^order
-        x_terms.append(x_pows[-1])
-        return x_terms
+        for i, c in enumerate(self.coefficients[2:]):
+            # multiply to get next order and rescale
+            x_pow *= x
+            x_pow //= self.identity
+            # compute term and add to corresponding accumulator
+            x_term = x_pow
+            # NOTE: skipping final coefficient (== 1) can be hardcoded for fixed configuration
+            if i < self.order - 2:
+                x_term *= c
+            # NOTE: even/odd branching can be hardcoded upon loop unrolling for fixed configuration
+            if i % 2:
+                odd_accumulator += x_term
+            else:
+                even_accumulator += x_term
+        # validate non-zero denominator
+        if even_accumulator <= odd_accumulator:
+            raise errors.ApproximatorDomainError("Exceeded critical point")
+        # compute numerator and denominator from accumulators
+        numerator = even_accumulator + odd_accumulator
+        denominator = even_accumulator - odd_accumulator
+        # rescale numerator for fixed-point division
+        numerator *= self.identity
+        return numerator // denominator
 
 
 def coefficients(order: int) -> list[int]:
