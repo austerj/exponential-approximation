@@ -1,3 +1,5 @@
+import math
+
 import matplotlib.pyplot as plt
 from matplotlib import ticker
 
@@ -39,6 +41,38 @@ def relative_error_plot(cls, title: str):
     axs[0].plot(xs, [cls.ref(x) for x in xs], label="Reference", linestyle=":", color="C0", zorder=99)
 
     axs[0].legend(title="Order")
+
+    return f
+
+
+def pade_taylor_max_relative_errors_plot():
+    stepsize = 0.05
+    xs = float_range(-math.log(2) / 2, math.log(2) / 2, stepsize)
+    xs = [x for x in xs if not (-stepsize < x < stepsize)]  # exclude e(0) = 1
+
+    # compute max relative errors
+    taylor_errs: dict[int, float] = {}
+    pade_errs: dict[int, float] = {}
+    for order in range(1, 6):
+        taylor_errs[order] = max(TaylorApproximator(DECIMALS, order).benchmark(xs))
+        pade_errs[order] = max(PadeApproximator(DECIMALS, order).benchmark(xs))
+
+    f, ax = plt.subplots(1)
+
+    # axes
+    ax.set_yscale("log")
+    ax.set_ylim(10**-16, 10**0)
+    ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+
+    # titles and labels
+    ax.set_title("Maximal relative errors")
+    ax.set_xlabel("Order")
+
+    # value plot
+    ax.plot(taylor_errs.keys(), taylor_errs.values(), color="C0", label="Taylor")
+    ax.plot(pade_errs.keys(), pade_errs.values(), color="C0", label="Padé", linestyle="--")
+
+    ax.legend(title="Method", loc="lower left")
 
     return f
 
@@ -94,6 +128,7 @@ def main():
     savefig(pade_relative_errors)
     savefig(bshift_pade_relative_errors)
     savefig(comparison_plot)
+    savefig(pade_taylor_max_relative_errors_plot)
 
 
 if __name__ == "__main__":
