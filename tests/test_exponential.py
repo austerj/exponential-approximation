@@ -6,12 +6,12 @@ from expapprox.approximator import ExponentialApproximator
 
 
 class MockApproximator(ExponentialApproximator):
-    def approx(self, x: int) -> int:
+    def __call__(self, *args, **kwargs):
         raise NotImplementedError
 
 
 def test_ref():
-    approximator = MockApproximator(10)
+    approximator = MockApproximator()
 
     # exp(0) == 1
     assert approximator.ref(0.0) == 1.0

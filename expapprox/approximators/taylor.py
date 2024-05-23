@@ -1,10 +1,10 @@
 import math
 
 from expapprox import errors
-from expapprox.approximator import ExponentialApproximator
+from expapprox.approximator import FixedPointExponentialApproximator
 
 
-class TaylorApproximator(ExponentialApproximator):
+class TaylorApproximator(FixedPointExponentialApproximator):
     """Order-N Taylor fixed-point approximator of the exponential function."""
 
     __slots__ = ("order", "factorial", "constants")

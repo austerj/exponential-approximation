@@ -88,14 +88,20 @@ class FixedPointApproximator(Approximator, ABC):
             return super().benchmark(xs)
 
 
-class ExponentialApproximator(FixedPointApproximator, ABC):
-    """Base class for fixed-point approximator of the exponential function."""
+class ExponentialApproximator(Approximator, ABC):
+    """Base class for approximator of the exponential function."""
 
     __slots__ = ()
 
     @classmethod
     def ref(cls, x: float) -> mpf:
         return mpmath.exp(x)
+
+
+class FixedPointExponentialApproximator(FixedPointApproximator, ExponentialApproximator, ABC):
+    """Base class for fixed-point approximator of the exponential function."""
+
+    __slots__ = ()
 
 
 def relative_error(approx: mpf, ref: mpf) -> float:

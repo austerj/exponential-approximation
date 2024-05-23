@@ -2,14 +2,14 @@ from abc import ABC
 
 import mpmath
 
-from expapprox.approximator import ExponentialApproximator
+from expapprox.approximator import FixedPointExponentialApproximator
 
 
-class BitShiftApproximator(ExponentialApproximator, ABC):
+class BitShiftApproximator(FixedPointExponentialApproximator, ABC):
     """Base class for bit-shifted fixed-point approximator of the exponential function."""
 
     __slots__ = ("remainder_approximator", "log2", "log2half")
-    remainder_approximator: ExponentialApproximator
+    remainder_approximator: FixedPointExponentialApproximator
 
     def __init__(self, decimals: int):
         super().__init__(decimals)

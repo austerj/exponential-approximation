@@ -1,11 +1,11 @@
 import math
 
 from expapprox import errors
-from expapprox.approximator import ExponentialApproximator
+from expapprox.approximator import FixedPointExponentialApproximator
 from expapprox.approximators.bshift import BitShiftApproximator
 
 
-class PadeApproximator(ExponentialApproximator):
+class PadeApproximator(FixedPointExponentialApproximator):
     """Order-[N/N] Padé fixed-point approximator of the exponential function."""
 
     __slots__ = ("order", "coefficients", "constant")
