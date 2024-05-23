@@ -10,7 +10,42 @@ from expapprox import errors
 mpf = float
 
 
-class FixedPointApproximator(ABC):
+class Approximator(ABC):
+    """Base class for approximators."""
+
+    __slots__ = ()
+
+    def _fields(self) -> list[str]:
+        """Get fields used in string representation."""
+        return [""]
+
+    def __repr__(self) -> str:
+        return f"{self.__class__.__name__}({', '.join(self._fields())})"
+
+    @abstractmethod
+    def __call__(self, x: int | float) -> mpf:
+        """Approximate function value as mpmath float."""
+        raise NotImplementedError
+
+    def try_call(self, x: int | float) -> mpf:
+        """Return function value approximation as mpmath float or NaN on error."""
+        try:
+            return self(x)
+        except:
+            return mpmath.nan
+
+    @classmethod
+    @abstractmethod
+    def ref(cls, x: float) -> mpf:
+        """Compute reference value."""
+        raise NotImplementedError
+
+    def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
+        """Compute relative errors (from reference values) for sequence of inputs."""
+        return [relative_error(self.try_call(x), self.ref(x)) for x in xs]
+
+
+class FixedPointApproximator(Approximator, ABC):
     """Base class for fixed-point number approximators."""
 
     __slots__ = ("decimals", "identity")
@@ -23,23 +58,11 @@ class FixedPointApproximator(ABC):
         # multiplicative identity of fixed-point specification
         self.identity = 10**self.decimals
 
-    def _fields(self):
-        """Get fields used in string representation."""
+    def _fields(self) -> list[str]:
         return [f"decimals={self.decimals}"]
 
-    def __repr__(self) -> str:
-        return f"{self.__class__.__name__}({', '.join(self._fields())})"
-
     def __call__(self, x: int | float) -> mpf:
-        """Approximate function value as mpmath float."""
         return self.to_float(self.approx(self.to_fixed(x)))
-
-    def try_call(self, x: int | float) -> mpf:
-        """Return function value approximation as mpmath float or NaN on error."""
-        try:
-            return self(x)
-        except:
-            return mpmath.nan
 
     @property
     def workdps(self):
@@ -49,12 +72,6 @@ class FixedPointApproximator(ABC):
     @abstractmethod
     def approx(self, x: int) -> int:
         """Approximate function value from fixed-point number as fixed-point number."""
-        raise NotImplementedError
-
-    @classmethod
-    @abstractmethod
-    def ref(cls, x: float) -> mpf:
-        """Compute reference value."""
         raise NotImplementedError
 
     def to_float(self, x: int) -> mpf:
@@ -67,9 +84,8 @@ class FixedPointApproximator(ABC):
         return math.floor(mpmath.mpf(x) * self.identity)
 
     def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
-        """Compute relative errors (from reference values) for sequence of inputs."""
         with self.workdps:
-            return [relative_error(self.try_call(x), self.ref(x)) for x in xs]
+            return super().benchmark(xs)
 
 
 class ExponentialApproximator(FixedPointApproximator, ABC):
