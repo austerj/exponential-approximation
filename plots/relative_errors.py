@@ -118,16 +118,11 @@ def pade_relative_errors():
     return relative_error_plot(PadeApproximator, "Order-[N/N] Padé approximation")
 
 
-def bshift_pade_relative_errors():
-    return relative_error_plot(BitShiftPadeApproximator, "Order-[N/N] bit-shifted Padé approximation")
-
-
 @rc_context
 def main():
     savefig(taylor_relative_errors)
     savefig(pade_relative_errors)
-    savefig(bshift_pade_relative_errors)
-    savefig(comparison_plot)
+    savefig(bitshift_comparison_plot)
     savefig(pade_taylor_max_relative_errors_plot)
 
 
