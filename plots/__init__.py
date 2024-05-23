@@ -35,7 +35,8 @@ rc_context = mpl.rc_context(
         "lines.color": "black",
         "lines.linewidth": 2,
         # legend
-        "legend.fontsize": "small",
+        "legend.title_fontsize": 10,
+        "legend.fontsize": 8,
         # axes
         "axes.linewidth": 1,
         "axes.spines.top": False,
