@@ -5,6 +5,7 @@ from abc import ABC, abstractmethod
 import mpmath
 
 from expapprox import errors
+from expapprox.tracker import IntegerTracker
 
 # mpmath float alias - actual type is dynamic and not handled properly by pyright etc.
 mpf = float
@@ -86,6 +87,14 @@ class FixedPointApproximator(Approximator, ABC):
     def benchmark(self, xs: typing.Sequence[float]) -> list[float]:
         with self.workdps:
             return super().benchmark(xs)
+
+    def max_bits(self, xs: typing.Sequence[float]) -> int:
+        """Track the maximal number of bits used for sequence of inputs."""
+        with IntegerTracker() as tracker:
+            # approximate sequence of inputs and return max number of bits used
+            for x in xs:
+                self.approx(tracker.int(self.to_fixed(x)))
+            return tracker.bits
 
 
 class ExponentialApproximator(Approximator, ABC):
