@@ -111,7 +111,7 @@ class MinimaxRationalApproximator(ExponentialApproximator):
 
     def __init__(self, order: int):
         if order not in MINIMAX_RATIONAL:
-            raise errors.ApproximatorError("Invalid order {order}; no minimax coefficients available")
+            raise errors.ApproximatorError(f"Invalid order {order}; no minimax coefficients available")
         self.order = order
         self.p_coefficients = [mpmath.mpf(x) for x in MINIMAX_RATIONAL[order][0]]
         self.q_coefficients = [mpmath.mpf(x) for x in MINIMAX_RATIONAL[order][1]]
